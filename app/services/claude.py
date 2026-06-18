@@ -13,6 +13,7 @@ import anthropic
 
 from app.config import load_config
 from app.logger import get_logger
+from app.services.memory import build_memory_injection, load_memory, total_count
 
 log = get_logger("claude")
 
@@ -46,11 +47,10 @@ def load_system_prompt() -> str:
         return _DEFAULT_SYSTEM_PROMPT
 
 
-def build_system_prompt(base_prompt: str, memory_entries: int = 0) -> str:
-    """
-    Combine base system prompt with memory injection.
-    Phase 4 will extend this with actual memory content.
-    """
+def build_system_prompt(base_prompt: str, injection: str = "") -> str:
+    """Combine base system prompt with memory injection block."""
+    if injection:
+        return base_prompt + "\n\n" + injection
     return base_prompt
 
 
@@ -79,10 +79,12 @@ async def stream_chat(
     model = config.get("claude_model", "claude-sonnet-4-6")
 
     base_prompt = load_system_prompt()
-    # Phase 4: memory injection will be added here
-    system_prompt = build_system_prompt(base_prompt, memory_entries=0)
+    memory_data = await load_memory()
+    injection = build_memory_injection(memory_data)
+    mem_entries = total_count(memory_data)
+    system_prompt = build_system_prompt(base_prompt, injection)
 
-    log.info(f"PROMPT_BUILD | system_len={len(system_prompt)} memory_entries=0")
+    log.info(f"PROMPT_BUILD | system_len={len(system_prompt)} memory_entries={mem_entries}")
     log.info(
         f"STREAM_START | session={sid} msg_count={len(messages)}"
         f" user_len={len(messages[-1]['content']) if messages else 0}"

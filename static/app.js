@@ -10,10 +10,11 @@ const API_BASE  = '/api';
 // Chat module state (persists across route changes)
 // ─────────────────────────────────────────────────────────────────────────────
 const _chat = {
-    sessionId:  null,
-    sessions:   [],
-    controller: null,
-    streaming:  false,
+    sessionId:   null,
+    sessions:    [],
+    controller:  null,
+    streaming:   false,
+    memoryCount: 0,   // loaded memories count — used for chip display
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -433,10 +434,14 @@ async function _createSession() {
     const res = await apiPost('/sessions', {});
     if (!res || !res.ok) { showToast('새 대화를 만들 수 없습니다.'); return; }
     const sess = await res.json();
+    // Update memory count if server reported it
+    if (typeof sess.memory_count === 'number') {
+        _chat.memoryCount = sess.memory_count;
+    }
     _chat.sessions.unshift(sess);
     _chat.sessionId = sess.id;
     _renderSessionList();
-    _renderMessages([]);
+    _renderMessages([], { memoryCount: _chat.memoryCount });
 }
 
 async function _newChat() {
@@ -446,19 +451,91 @@ async function _newChat() {
 }
 
 function _handleEndSession() {
-    // SCR-03 dialog is implemented in Phase 4
-    showToast('세션 종료 기능은 Phase 4에서 구현됩니다.');
+    if (_chat.streaming) { showToast('응답이 진행 중입니다.'); return; }
+    if (!_chat.sessionId) return;
+    _showEndDialog();
+}
+
+// ─── SCR-03: Session End Dialog ───────────────────────────────────────────────
+function _showEndDialog() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'dialog-backdrop';
+    backdrop.innerHTML = `
+    <div class="dialog-card">
+        <div class="dialog-icon">◼</div>
+        <div class="dialog-title">세션 종료</div>
+        <div class="dialog-desc">
+            이 대화를 종료하고 요약을 메모리에 저장할까요?<br>
+            요약 생성에 수 초가 소요됩니다.
+        </div>
+        <div class="dialog-actions">
+            <button class="btn-dialog-primary" id="dlg-btn-save">저장 후 종료</button>
+            <button class="btn-dialog-secondary" id="dlg-btn-nosave">저장 안 하고 종료</button>
+        </div>
+    </div>`;
+
+    document.body.appendChild(backdrop);
+
+    function closeDialog() {
+        backdrop.remove();
+        document.removeEventListener('keydown', onEscape);
+    }
+    function onEscape(e) { if (e.key === 'Escape') closeDialog(); }
+    document.addEventListener('keydown', onEscape);
+
+    // Dismiss on backdrop click (not on card)
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeDialog(); });
+
+    document.getElementById('dlg-btn-save').addEventListener('click', () =>
+        _endSession(true, closeDialog));
+    document.getElementById('dlg-btn-nosave').addEventListener('click', () =>
+        _endSession(false, closeDialog));
+}
+
+async function _endSession(saveSummary, closeDialog) {
+    const $btnSave   = document.getElementById('dlg-btn-save');
+    const $btnNoSave = document.getElementById('dlg-btn-nosave');
+
+    if ($btnSave)   $btnSave.disabled   = true;
+    if ($btnNoSave) $btnNoSave.disabled = true;
+    if ($btnSave)   $btnSave.textContent = saveSummary ? '요약 생성 중…' : '처리 중…';
+
+    const res = await apiPost(`/sessions/${_chat.sessionId}/end`, { save_summary: saveSummary });
+
+    if (!res || !res.ok) {
+        showToast('세션 종료에 실패했습니다.');
+        if ($btnSave)   { $btnSave.disabled = false; $btnSave.textContent = '저장 후 종료'; }
+        if ($btnNoSave) $btnNoSave.disabled = false;
+        return;
+    }
+
+    const data = await res.json();
+    closeDialog();
+
+    if (saveSummary && data.status === 'summarized') {
+        if (typeof data.memory_count === 'number') _chat.memoryCount = data.memory_count;
+        showToast('메모리에 저장되었습니다.');
+    }
+
+    // Start a fresh session
+    await _createSession();
+    _closeSidebar();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Message rendering
 // ─────────────────────────────────────────────────────────────────────────────
-function _renderMessages(messages) {
+function _renderMessages(messages, opts = {}) {
+    const { memoryCount = 0 } = opts;
     const $msgs = document.getElementById('messages');
     if (!$msgs) return;
 
+    const chipHtml = memoryCount > 0
+        ? `<div class="memory-chip-row"><div class="memory-chip-badge">이전 대화 기억을 불러왔어요 · ${memoryCount}개 세션</div></div>`
+        : '';
+
     if (!messages || messages.length === 0) {
-        $msgs.innerHTML = `
+        $msgs.innerHTML = chipHtml + `
         <div class="empty-state">
             <div class="empty-greeting">
                 <div class="empty-greeting-name">아리 · SIWOO AI</div>
@@ -484,7 +561,7 @@ function _renderMessages(messages) {
         return;
     }
 
-    $msgs.innerHTML = '';
+    $msgs.innerHTML = chipHtml;
     for (const msg of messages) {
         _appendBubble(msg.role, msg.content);
     }
