@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body { font-family: 'Pretendard', -apple-system, sans-serif; color: #1f1f22; -webkit-font-smoothing: antialiased; background: #f1f1ef; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    @media print {
+      body { background: #fff; }
+      .sheet { box-shadow: none !important; border: none !important; margin: 0 !important; }
+      .noprint { display: none !important; }
+      .screen { break-inside: avoid; }
+      @page { margin: 16mm 14mm; }
+    }
+  </style>
+</helmet>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#dff6fb"/><g transform="translate(30,28)"><rect x="0" y="0" width="40" height="44" rx="4" fill="#fff" stroke="#0e5e78" stroke-width="2"/><line x1="7" y1="11" x2="33" y2="11" stroke="#0e5e78" stroke-width="2.5"/><line x1="7" y1="20" x2="26" y2="20" stroke="#9bd6e6" stroke-width="2.5"/><line x1="7" y1="28" x2="33" y2="28" stroke="#9bd6e6" stroke-width="2.5"/><line x1="7" y1="36" x2="22" y2="36" stroke="#9bd6e6" stroke-width="2.5"/></g></svg></template>
+  <div style="min-height:100vh;padding:40px 20px 80px;">
+
+  <!-- floating actions -->
+  <div class="noprint" style="position:fixed;top:20px;right:20px;z-index:50;display:flex;gap:8px;">
+    <button onClick="{{ print }}" style="height:38px;padding:0 16px;border-radius:9px;background:#18181b;color:#fafafa;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:0 4px 14px -6px rgba(0,0,0,0.35);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      PDF로 저장
+    </button>
+  </div>
+
+  <div style="max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:20px;">
+
+    <!-- ===== COVER ===== -->
+    <div class="sheet" style="background:#fff;border:1px solid #e6e6e4;border-radius:16px;padding:44px 40px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:30px;">
+        <span style="width:42px;height:42px;border-radius:11px;background:#dff6fb;color:#0e5e78;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;">아리</span>
+        <div>
+          <div class="mono" style="font-weight:600;font-size:15px;letter-spacing:.14em;color:#18181b;line-height:1;">SIWOO&nbsp;AI</div>
+          <div style="font-size:11px;color:#9b9ba2;margin-top:5px;">개인 AI 비서 · Personal Assistant</div>
+        </div>
+      </div>
+      <div class="mono" style="font-size:11px;font-weight:600;letter-spacing:.16em;color:#7fb8cc;margin-bottom:12px;">UI SCREEN DESIGN SPECIFICATION</div>
+      <h1 style="margin:0;font-size:38px;font-weight:700;letter-spacing:-0.02em;color:#161616;line-height:1.12;">화면설계서</h1>
+      <p style="margin:14px 0 0;font-size:15px;line-height:1.7;color:#52525b;max-width:560px;">개인 전용 로컬 AI 비서 웹앱의 전체 화면 구성과 인터랙션을 정의합니다. 라이트 테마, 카드·패널 기반 클린 UI, 데스크탑·모바일 반응형을 기준으로 합니다.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;">
+        <div style="flex:1;min-width:130px;border:1px solid #eeeeec;border-radius:11px;padding:13px 15px;">
+          <div class="mono" style="font-size:10px;letter-spacing:.1em;color:#a8a8ad;">VERSION</div>
+          <div style="font-size:15px;font-weight:600;color:#27272a;margin-top:5px;">v1.0</div>
+        </div>
+        <div style="flex:1;min-width:130px;border:1px solid #eeeeec;border-radius:11px;padding:13px 15px;">
+          <div class="mono" style="font-size:10px;letter-spacing:.1em;color:#a8a8ad;">DATE</div>
+          <div style="font-size:15px;font-weight:600;color:#27272a;margin-top:5px;">2026 · 06 · 18</div>
+        </div>
+        <div style="flex:1;min-width:130px;border:1px solid #eeeeec;border-radius:11px;padding:13px 15px;">
+          <div class="mono" style="font-size:10px;letter-spacing:.1em;color:#a8a8ad;">SCREENS</div>
+          <div style="font-size:15px;font-weight:600;color:#27272a;margin-top:5px;">5 + 다이얼로그</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DESIGN TOKENS ===== -->
+    <div class="sheet screen" style="background:#fff;border:1px solid #e6e6e4;border-radius:16px;padding:34px 40px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div class="mono" style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#a8a8ad;margin-bottom:7px;">FOUNDATION</div>
+      <h2 style="margin:0 0 4px;font-size:23px;font-weight:700;color:#18181b;">디자인 토큰</h2>
+      <p style="margin:0 0 22px;font-size:13.5px;color:#71717a;">모든 화면에 공통 적용되는 색·타이포·형태 규칙입니다.</p>
+
+      <div class="mono" style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#9b9ba2;margin-bottom:11px;">COLOR</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:26px;">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="8">
+          <div style="border:1px solid #eeeeec;border-radius:10px;overflow:hidden;">
+            <div style="height:48px;{{ c.swatchStyle }}"></div>
+            <div style="padding:9px 11px;">
+              <div style="font-size:12.5px;font-weight:600;color:#27272a;">{{ c.name }}</div>
+              <div class="mono" style="font-size:10.5px;color:#a8a8ad;margin-top:2px;">{{ c.hex }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:20px;">
+        <div style="flex:1;min-width:240px;">
+          <div class="mono" style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#9b9ba2;margin-bottom:11px;">TYPOGRAPHY</div>
+          <div style="display:flex;flex-direction:column;gap:9px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #f2f2f0;padding-bottom:9px;">
+              <span style="font-size:19px;font-weight:700;color:#18181b;">Pretendard</span>
+              <span class="mono" style="font-size:11px;color:#a8a8ad;">본문 · UI</span>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;">
+              <span class="mono" style="font-size:16px;font-weight:500;color:#18181b;">JetBrains Mono</span>
+              <span class="mono" style="font-size:11px;color:#a8a8ad;">메타 · 라벨</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:240px;">
+          <div class="mono" style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#9b9ba2;margin-bottom:11px;">SHAPE & SPACING</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:#3f3f46;">
+            <div style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #f2f2f0;padding-bottom:8px;"><span style="white-space:nowrap;">모서리 반경</span><span class="mono" style="color:#71717a;white-space:nowrap;">8 · 10 · 13 px</span></div>
+            <div style="display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid #f2f2f0;padding-bottom:8px;"><span style="white-space:nowrap;">보더</span><span class="mono" style="color:#71717a;white-space:nowrap;">1px · #ebebe9</span></div>
+            <div style="display:flex;justify-content:space-between;gap:14px;"><span style="white-space:nowrap;">그림자</span><span class="mono" style="color:#71717a;white-space:nowrap;">최소 · 평면 카드</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREEN INDEX ===== -->
+    <div class="sheet screen" style="background:#fff;border:1px solid #e6e6e4;border-radius:16px;padding:34px 40px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div class="mono" style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#a8a8ad;margin-bottom:7px;">CONTENTS</div>
+      <h2 style="margin:0 0 18px;font-size:23px;font-weight:700;color:#18181b;">화면 목록</h2>
+      <div style="border:1px solid #eeeeec;border-radius:11px;overflow:hidden;">
+        <sc-for list="{{ index }}" as="r" hint-placeholder-count="6">
+          <div style="{{ r.rowStyle }}">
+            <span class="mono" style="font-size:12px;font-weight:600;color:#0e5e78;background:#eef9fc;padding:3px 8px;border-radius:6px;flex:none;width:62px;text-align:center;">{{ r.id }}</span>
+            <span style="font-size:14px;font-weight:600;color:#27272a;flex:1;min-width:0;">{{ r.title }}</span>
+            <span class="mono" style="font-size:11.5px;color:#a8a8ad;flex:none;">{{ r.url }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ===== SCREENS ===== -->
+    <sc-for list="{{ screens }}" as="s" hint-placeholder-count="5">
+      <div class="sheet screen" style="background:#fff;border:1px solid #e6e6e4;border-radius:16px;padding:34px 40px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:5px;">
+          <span class="mono" style="font-size:12.5px;font-weight:600;color:#0e5e78;background:#dff6fb;padding:4px 11px;border-radius:7px;white-space:nowrap;">{{ s.id }}</span>
+          <span class="mono" style="font-size:11.5px;color:#a8a8ad;">{{ s.url }}</span>
+        </div>
+        <h2 style="margin:6px 0 0;font-size:24px;font-weight:700;letter-spacing:-0.01em;color:#161616;">{{ s.title }}</h2>
+        <p style="margin:10px 0 0;font-size:14px;line-height:1.7;color:#52525b;">{{ s.purpose }}</p>
+
+        <!-- schematic -->
+        <div style="margin-top:22px;">{{ s.diagram }}</div>
+
+        <!-- components -->
+        <div class="mono" style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#9b9ba2;margin:26px 0 11px;">COMPONENTS</div>
+        <div style="border:1px solid #eeeeec;border-radius:11px;overflow:hidden;">
+          <sc-for list="{{ s.components }}" as="c" hint-placeholder-count="4">
+            <div style="{{ c.rowStyle }}">
+              <span style="font-size:13.5px;font-weight:600;color:#27272a;flex:none;width:150px;">{{ c.name }}</span>
+              <span style="font-size:13px;line-height:1.55;color:#52525b;flex:1;min-width:0;">{{ c.desc }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- states / interactions -->
+        <div class="mono" style="font-size:10.5px;font-weight:600;letter-spacing:.1em;color:#9b9ba2;margin:24px 0 11px;">STATES & INTERACTIONS</div>
+        <div style="display:flex;flex-direction:column;gap:9px;">
+          <sc-for list="{{ s.states }}" as="x" hint-placeholder-count="3">
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <span style="width:5px;height:5px;border-radius:50%;background:#1f8a5b;margin-top:8px;flex:none;"></span>
+              <span style="font-size:13.5px;line-height:1.6;color:#3f3f46;">{{ x }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+
+    <!-- ===== RESPONSIVE & COMMON ===== -->
+    <div class="sheet screen" style="background:#fff;border:1px solid #e6e6e4;border-radius:16px;padding:34px 40px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+      <div class="mono" style="font-size:11px;font-weight:600;letter-spacing:.14em;color:#a8a8ad;margin-bottom:7px;">RULES</div>
+      <h2 style="margin:0 0 18px;font-size:23px;font-weight:700;color:#18181b;">반응형 · 공통 규칙</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:22px;">
+        <sc-for list="{{ breakpoints }}" as="b" hint-placeholder-count="3">
+          <div style="border:1px solid #eeeeec;border-radius:11px;padding:15px;">
+            <div class="mono" style="font-size:11px;font-weight:600;color:#0e5e78;">{{ b.range }}</div>
+            <div style="font-size:13.5px;font-weight:600;color:#27272a;margin:7px 0 4px;">{{ b.name }}</div>
+            <div style="font-size:12.5px;line-height:1.55;color:#71717a;">{{ b.note }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px;">
+        <sc-for list="{{ common }}" as="x" hint-placeholder-count="4">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="width:5px;height:5px;border-radius:50%;background:#1f8a5b;margin-top:8px;flex:none;"></span>
+            <span style="font-size:13.5px;line-height:1.6;color:#3f3f46;">{{ x }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:10px 0;">
+      <span class="mono" style="font-size:11px;color:#bcbcc2;">SIWOO AI · 화면설계서 v1.0 · 문서 끝</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:1200}}">
+class Component extends DCLogic {
+  print = () => window.print();
+
+  // ---- schematic builders (createElement so they survive re-render) ----
+  box(props, children) { return React.createElement('div', props, children); }
+  label(text, opts) {
+    const o = opts || {};
+    return React.createElement('div', { style: Object.assign({ fontSize: '11px', color: o.color || '#71717a', fontFamily: o.mono ? "'JetBrains Mono', monospace" : 'inherit', fontWeight: o.weight || 500 }, o.style || {}) }, text);
+  }
+  frame(children, h) {
+    return React.createElement('div', { style: { border: '1px solid #e4e4e2', borderRadius: '10px', background: '#fbfbfa', padding: '12px', minHeight: h || 'auto' } }, children);
+  }
+  chip(text, fill, fg) {
+    return React.createElement('div', { style: { fontSize: '10.5px', fontFamily: "'JetBrains Mono', monospace", color: fg || '#71717a', background: fill || '#f1f1ef', borderRadius: '5px', padding: '4px 8px', display: 'inline-block' } }, text);
+  }
+  bubble(text, who) {
+    const ai = who === 'ai';
+    return React.createElement('div', { style: { display: 'flex', justifyContent: ai ? 'flex-start' : 'flex-end', marginBottom: '7px' } },
+      React.createElement('div', { style: { maxWidth: '72%', fontSize: '11px', lineHeight: 1.5, color: '#3f3f46', background: ai ? '#fff' : '#eef9fc', border: ai ? '1px solid #ececea' : '1px solid #cdeef7', borderRadius: '9px', padding: '7px 10px' } }, text));
+  }
+
+  diagLogin() {
+    const R = React.createElement;
+    return this.frame([
+      R('div', { key: 'h', style: { display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '14px' } }, [
+        R('div', { key: 'm', style: { width: '22px', height: '22px', borderRadius: '6px', background: '#dff6fb' } }),
+        this.label('SIWOO AI', { mono: true, weight: 600, color: '#27272a', style: { letterSpacing: '.1em' } }),
+      ]),
+      R('div', { key: 'card', style: { maxWidth: '300px', margin: '0 auto', border: '1px solid #eaeae8', borderRadius: '10px', background: '#fff', padding: '16px' } }, [
+        R('div', { key: 'l', style: { display: 'flex', justifyContent: 'space-between', marginBottom: '8px' } }, [this.label('접속 비밀번호', { weight: 600, color: '#27272a' }), this.label('PASSWORD', { mono: true, color: '#b4b4b8' })]),
+        R('div', { key: 'i', style: { height: '34px', border: '1px solid #e3e3e1', borderRadius: '8px', background: '#fcfcfb', marginBottom: '10px' } }),
+        R('div', { key: 'b', style: { height: '36px', borderRadius: '8px', background: '#dff6fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#0e5e78' } }, '접속'),
+      ]),
+    ], '180px');
+  }
+
+  diagChat() {
+    const R = React.createElement;
+    return this.frame(
+      R('div', { style: { display: 'flex', gap: '10px', height: '220px' } }, [
+        // sidebar
+        R('div', { key: 'sb', style: { width: '34%', borderRight: '1px solid #ededeb', paddingRight: '10px', display: 'flex', flexDirection: 'column', gap: '7px' } }, [
+          R('div', { key: 'n', style: { height: '28px', borderRadius: '7px', background: '#dff6fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10.5px', fontWeight: 700, color: '#0e5e78' } }, '+ 새 대화'),
+          this.label('SESSIONS', { mono: true, weight: 600, color: '#a8a8ad', style: { fontSize: '9.5px', letterSpacing: '.1em', marginTop: '3px' } }),
+          R('div', { key: 's1', style: { height: '34px', borderRadius: '7px', background: '#eef9fc', border: '1px solid #cdeef7' } }),
+          R('div', { key: 's2', style: { height: '34px', borderRadius: '7px', background: 'transparent' } }),
+          R('div', { key: 's3', style: { height: '34px', borderRadius: '7px', background: 'transparent' } }),
+        ]),
+        // convo
+        R('div', { key: 'cv', style: { flex: 1, display: 'flex', flexDirection: 'column' } }, [
+          R('div', { key: 'top', style: { flex: 1 } }, [this.bubble('안녕하세요, 시우씨!', 'ai'), this.bubble('할일 정리해줘', 'me'), this.bubble('알겠습니다. 정리해 드릴게요 ▌', 'ai')]),
+          R('div', { key: 'in', style: { display: 'flex', gap: '6px', alignItems: 'center', border: '1px solid #e3e3e1', borderRadius: '9px', padding: '6px 7px', background: '#fff' } }, [
+            R('div', { key: 't', style: { flex: 1, fontSize: '10.5px', color: '#bcbcc2' } }, '메시지 보내기…'),
+            this.chip('종료', '#fff', '#71717a'),
+            R('div', { key: 's', style: { width: '26px', height: '26px', borderRadius: '7px', background: '#dff6fb' } }),
+          ]),
+        ]),
+      ]), '240px');
+  }
+
+  diagDialog() {
+    const R = React.createElement;
+    return this.frame(
+      R('div', { style: { maxWidth: '280px', margin: '0 auto', border: '1px solid #eaeae8', borderRadius: '11px', background: '#fff', padding: '16px', boxShadow: '0 6px 18px -10px rgba(0,0,0,0.2)' } }, [
+        R('div', { key: 'ic', style: { width: '32px', height: '32px', borderRadius: '8px', background: '#f4f4f2', marginBottom: '10px' } }),
+        this.label('세션 종료', { weight: 700, color: '#18181b', style: { fontSize: '15px' } }),
+        R('div', { key: 'd', style: { fontSize: '11px', color: '#71717a', margin: '6px 0 12px', lineHeight: 1.5 } }, '이 대화를 종료하고 요약을 메모리에 저장할까요?'),
+        R('div', { key: 'b1', style: { height: '32px', borderRadius: '8px', background: '#dff6fb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 700, color: '#0e5e78', marginBottom: '6px' } }, '저장 후 종료'),
+        R('div', { key: 'b2', style: { height: '32px', borderRadius: '8px', border: '1px solid #e6e6e4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 600, color: '#3f3f46' } }, '저장 안 하고 종료'),
+      ]), '200px');
+  }
+
+  diagMemory() {
+    const R = React.createElement;
+    const card = (num, date, lines) => R('div', { key: num, style: { border: '1px solid #eaeae8', borderRadius: '9px', overflow: 'hidden', marginBottom: '8px' } }, [
+      R('div', { key: 'h', style: { display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 11px', borderBottom: '1px solid #f2f2f0' } }, [
+        this.chip(num, '#f4f4f2', '#6b6b70'), this.label(date, { mono: true, color: '#52525b', style: { fontSize: '11px' } }),
+        R('div', { key: 'sp', style: { flex: 1 } }), R('div', { key: 'x', style: { fontSize: '12px', color: '#bdbdc5' } }, '×'),
+      ]),
+      R('div', { key: 'b', style: { padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: '5px' } },
+        lines.map((t, i) => R('div', { key: i, style: { display: 'flex', gap: '7px', alignItems: 'flex-start' } }, [
+          R('div', { key: 'd', style: { width: '4px', height: '4px', borderRadius: '50%', background: '#1f8a5b', marginTop: '6px' } }),
+          R('div', { key: 't', style: { fontSize: '10.5px', color: '#3f3f46' } }, t)]))),
+    ]);
+    return this.frame([
+      R('div', { key: 'hd', style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' } }, [
+        this.label('누적 메모리', { weight: 700, color: '#18181b', style: { fontSize: '15px' } }),
+        this.chip('전체 초기화', '#fff', '#c5453b'),
+      ]),
+      card('#03', '2026-06-18', ['시우는 Python 개발자이며 개인 프로젝트를 즐긴다', '간결하고 직접적인 답변을 선호한다']),
+      card('#02', '2026-06-17', ['운동 루틴 개선에 관심이 있음']),
+    ], '210px');
+  }
+
+  diagSettings() {
+    const R = React.createElement;
+    return this.frame([
+      R('div', { key: 'h', style: { display: 'flex', justifyContent: 'space-between', marginBottom: '10px' } }, [
+        this.label('비서 정체성 · 시스템 프롬프트', { weight: 600, color: '#27272a' }),
+        this.label('system_prompt.txt', { mono: true, color: '#b4b4b8' }),
+      ]),
+      R('div', { key: 'ta', style: { border: '1px solid #e6e6e4', borderRadius: '9px', background: '#fcfcfb', padding: '11px', height: '120px', fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', color: '#71717a', lineHeight: 1.7 } },
+        "당신은 시우의 개인 AI 비서입니다.\n이름은 '아리'이며, 시우를 가장 잘\n이해하는 조용하고 유능한 비서입니다.\n\n[행동 원칙]\n- 시우의 말투와 선호에 맞춰 대화한다."),
+      R('div', { key: 'bt', style: { display: 'flex', justifyContent: 'flex-end', gap: '7px', marginTop: '11px', alignItems: 'center' } }, [
+        R('div', { key: 'ok', style: { flex: 1, fontSize: '11px', color: '#1f8a5b', fontWeight: 600 } }, '✓ 저장되었습니다'),
+        this.chip('초기화', '#fff', '#71717a'),
+        R('div', { key: 's', style: { height: '30px', padding: '0 18px', borderRadius: '8px', background: '#dff6fb', display: 'flex', alignItems: 'center', fontSize: '11px', fontWeight: 700, color: '#0e5e78' } }, '저장'),
+      ]),
+    ], '210px');
+  }
+
+  renderVals() {
+    const rowBase = (i, total) => ({ display: 'flex', alignItems: 'center', gap: '13px', padding: '12px 15px', background: i % 2 ? '#fcfcfb' : '#fff', borderBottom: i < total - 1 ? '1px solid #f2f2f0' : 'none' });
+    const compRow = (i, total) => ({ display: 'flex', gap: '13px', alignItems: 'flex-start', padding: '11px 15px', background: i % 2 ? '#fcfcfb' : '#fff', borderBottom: i < total - 1 ? '1px solid #f2f2f0' : 'none' });
+
+    const colors = [
+      { name: 'Accent · Fill', hex: '#dff6fb', bg: '#dff6fb' },
+      { name: 'Accent · Ink', hex: '#0e5e78', bg: '#0e5e78' },
+      { name: 'Status', hex: '#1f8a5b', bg: '#1f8a5b' },
+      { name: 'Ink', hex: '#18181b', bg: '#18181b' },
+      { name: 'Text', hex: '#3f3f46', bg: '#3f3f46' },
+      { name: 'Muted', hex: '#9b9ba2', bg: '#9b9ba2' },
+      { name: 'Surface', hex: '#ffffff', bg: '#ffffff' },
+      { name: 'Page', hex: '#fbfbfa', bg: '#fbfbfa' },
+      { name: 'Border', hex: '#ebebe9', bg: '#ebebe9' },
+      { name: 'Danger', hex: '#c5453b', bg: '#c5453b' },
+    ].map(c => ({ ...c, swatchStyle: { background: c.bg, borderBottom: (c.bg === '#ffffff' || c.bg === '#fbfbfa') ? '1px solid #eeeeec' : 'none' } }));
+
+    const index = [
+      { id: 'SCR-01', title: '로그인', url: '/login' },
+      { id: 'SCR-02', title: '메인 채팅', url: '/' },
+      { id: 'SCR-03', title: '세션 종료 다이얼로그', url: 'modal' },
+      { id: 'SCR-04', title: '메모리 뷰어', url: '/memory' },
+      { id: 'SCR-05', title: '설정 · 시스템 프롬프트', url: '/settings' },
+    ].map((r, i, a) => ({ ...r, rowStyle: rowBase(i, a.length) }));
+
+    const screens = [
+      {
+        id: 'SCR-01', url: '/login', title: '로그인',
+        purpose: '미인증 사용자가 접속하면 자동 표시됩니다. 단일 비밀번호로 로컬 비서에 접속하며, 인증 성공 시 메인 채팅으로 이동합니다.',
+        diagram: this.diagLogin(),
+        components: [
+          { name: '브랜드 로고', desc: '아리 마크 + SIWOO AI 워드마크. 스카이블루 필에 딥블루 글자.' },
+          { name: '비밀번호 입력', desc: 'PASSWORD 모노 라벨. 포커스·오류 상태에 따라 보더 색 변화.' },
+          { name: '접속 버튼', desc: '스카이블루 필. Enter 키로도 제출.' },
+          { name: 'DEMO 힌트', desc: '데모 비밀번호 siwoo 안내 (실제 배포 시 제거).' },
+        ].map((c, i, a) => ({ ...c, rowStyle: compRow(i, a.length) })),
+        states: [
+          '오류: 입력 필드 흔들림(shake) 애니메이션 + "비밀번호가 올바르지 않습니다" 메시지.',
+          '성공: 메인 채팅 화면(/)으로 전환, 세션 토큰 발급.',
+          '하단에 "로컬 저장 · 같은 WiFi에서만 접속 가능" 안내 표기.',
+        ],
+      },
+      {
+        id: 'SCR-02', url: '/  ·  좌측 사이드바 + 우측 채팅', title: '메인 채팅',
+        purpose: '핵심 화면. 좌측 세션 목록과 우측 대화 영역으로 구성되며, Claude 스트리밍 응답을 실시간 타이핑으로 표시합니다.',
+        diagram: this.diagChat(),
+        components: [
+          { name: '+ 새 대화', desc: '새 세션 생성 후 채팅 영역 초기화. 스카이블루 필 버튼.' },
+          { name: '세션 목록', desc: '날짜 + 첫 메시지 일부 미리보기. 현재 세션은 블루 틴트 + 보더로 강조, 상태 점 표시.' },
+          { name: 'AI 말풍선', desc: '좌측 정렬, 흰 카드 + 얇은 보더. 아바타(아리 마크) 동반.' },
+          { name: '사용자 말풍선', desc: '우측 정렬, 연한 그레이 필.' },
+          { name: '스트리밍 커서 ▌', desc: '응답 생성 중 깜박임, 완료 시 사라짐.' },
+          { name: '입력 바', desc: 'Enter 전송 / Shift+Enter 줄바꿈. [종료] + [전송] 버튼 동반.' },
+          { name: '상단 네비', desc: '채팅 · 메모리 · 설정 탭 + 로컬 연결 상태 칩 + 로그아웃.' },
+        ].map((c, i, a) => ({ ...c, rowStyle: compRow(i, a.length) })),
+        states: [
+          '빈 새 대화: 인사 메시지 + 추천 프롬프트 노출.',
+          '응답 중: 전송 버튼 비활성, 스트리밍 커서 표시.',
+          '상단에 "이전 대화 기억을 불러왔어요 · N개 세션" 메모리 주입 안내 칩.',
+          '모바일(<768px): 사이드바는 햄버거 드로어로 전환, 스크림 오버레이.',
+        ],
+      },
+      {
+        id: 'SCR-03', url: 'modal · overlay', title: '세션 종료 확인 다이얼로그',
+        purpose: '[종료] 클릭 시 표시. 현재 대화를 요약해 메모리에 저장할지 확인합니다.',
+        diagram: this.diagDialog(),
+        components: [
+          { name: '저장 후 종료', desc: '요약 생성 → memory.json 누적 → 새 세션 시작. 스카이블루 필.' },
+          { name: '저장 안 하고 종료', desc: '요약 없이 세션만 종료.' },
+          { name: '취소', desc: '다이얼로그 닫고 대화 유지.' },
+        ].map((c, i, a) => ({ ...c, rowStyle: compRow(i, a.length) })),
+        states: [
+          '저장 선택 시: 요약 생성 진행 표시(단계별) → 완료 토스트 "메모리에 저장되었습니다".',
+          '요약 생성에 수 초 소요 안내 문구 표기.',
+          '배경 딤 + 블러, 스케일 인 등장 애니메이션.',
+        ],
+      },
+      {
+        id: 'SCR-04', url: '/memory', title: '메모리 뷰어',
+        purpose: '세션별 요약이 누적된 "시우에 대한 이해"를 카드로 열람·관리합니다.',
+        diagram: this.diagMemory(),
+        components: [
+          { name: '요약 카드', desc: '#번호 + 날짜 + (라벨) 헤더, 본문은 핵심 불릿 목록(그린 점).' },
+          { name: '항목 삭제', desc: '카드 우상단 × — 확인 없이 즉시 삭제(UX 간소화).' },
+          { name: '전체 초기화', desc: '레드 아웃라인 버튼. 확인 다이얼로그 후 memory.json 초기화.' },
+          { name: '빈 상태', desc: '점선 카드로 "아직 저장된 메모리가 없어요" 안내.' },
+        ].map((c, i, a) => ({ ...c, rowStyle: compRow(i, a.length) })),
+        states: [
+          '헤더에 ACCUMULATED MEMORY 모노 라벨 + 총 세션 수.',
+          '전체 초기화: 되돌릴 수 없음 경고 다이얼로그.',
+          '삭제·초기화 후 토스트 피드백.',
+        ],
+      },
+      {
+        id: 'SCR-05', url: '/settings', title: '설정 · 시스템 프롬프트',
+        purpose: '아리의 정체성과 행동 원칙(시스템 프롬프트)을 편집합니다. 저장 시 현재 세션에 즉시 반영됩니다.',
+        diagram: this.diagSettings(),
+        components: [
+          { name: '프롬프트 에디터', desc: '모노스페이스 텍스트에리어. system_prompt.txt 내용 로드.' },
+          { name: '저장', desc: '파일에 즉시 반영 + 현재 세션 적용. 스카이블루 필.' },
+          { name: '초기화', desc: '기본 프롬프트로 되돌림.' },
+        ].map((c, i, a) => ({ ...c, rowStyle: compRow(i, a.length) })),
+        states: [
+          '저장 후: "✓ 저장되었습니다" 그린 인라인 확인 메시지(자동 사라짐).',
+          '편집 중에는 확인 메시지 숨김.',
+          'SETTINGS 모노 라벨 헤더.',
+        ],
+      },
+    ];
+
+    const breakpoints = [
+      { range: '1024px +', name: '데스크탑', note: '사이드바 + 채팅 2단 고정 레이아웃, 네비 라벨 노출.' },
+      { range: '768px', name: '태블릿', note: '본문 폭 축소, 동일 2단 유지.' },
+      { range: '360–767px', name: '모바일', note: '사이드바 드로어 전환, 네비는 아이콘만, 햄버거 토글.' },
+    ];
+
+    const common = [
+      '라이트 테마 고정 · 일반 HTML/CSS · 카드/패널 기반 클린 UI (NFR-03).',
+      '액센트: 스카이블루 필 + 딥블루 잉크, 상태는 그린, 위험은 레드로 일관 사용.',
+      '메타·코드·타임스탬프·라벨은 JetBrains Mono, 본문은 Pretendard.',
+      '스트리밍 첫 토큰 2초 이내 표시(NFR-04), API 오류 시 크래시 없이 메시지 노출(NFR-07).',
+      '모든 파괴적 동작(전체 초기화)은 확인 다이얼로그, 일반 동작은 토스트 피드백.',
+    ];
+
+    return { print: this.print, colors, index, screens, breakpoints, common };
+  }
+}
+</script>
+</body>
+</html>

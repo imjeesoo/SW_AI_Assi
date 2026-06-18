@@ -1,0 +1,329 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIWOO AI — Global Stylesheet
+   Design tokens: FINALUXUI.md §1
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ─── Reset ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ─── Global ─────────────────────────────────────────────────────────────── */
+body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f1f1ef;
+    color: #3f3f46;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+#app {
+    min-height: 100vh;
+}
+
+/* ─── Utilities ──────────────────────────────────────────────────────────── */
+.mono   { font-family: 'JetBrains Mono', monospace; }
+.muted  { color: #9b9ba2; }
+.ink    { color: #18181b; }
+.w-full { width: 100%; }
+
+/* ─── Brand Badge ────────────────────────────────────────────────────────── */
+.brand-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #dff6fb;
+    color: #0e5e78;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.brand-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: #18181b;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    background: #dff6fb;
+    color: #0e5e78;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.btn-primary:hover:not(:disabled)  { background: #c8edf5; }
+.btn-primary:disabled               { opacity: 0.55; cursor: not-allowed; }
+
+.btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    background: transparent;
+    color: #3f3f46;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #e6e6e4;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-secondary:hover { background: #f4f4f2; }
+
+.btn-danger {
+    background: transparent;
+    color: #c5453b;
+    border: 1px solid #f0b8b4;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-danger:hover { background: #fdf2f1; }
+
+.btn-ghost {
+    background: none;
+    border: none;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 13px;
+    color: #71717a;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.btn-ghost:hover { background: #f4f4f2; }
+
+/* ─── Form Elements ──────────────────────────────────────────────────────── */
+.form-input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid #e3e3e1;
+    border-radius: 8px;
+    background: #fcfcfb;
+    padding: 0 10px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    color: #18181b;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input:focus {
+    border-color: #0e5e78;
+    box-shadow: 0 0 0 2px rgba(14,94,120,0.08);
+}
+.form-input::placeholder { color: #9b9ba2; }
+
+.form-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.form-label-ko { font-size: 13px; font-weight: 500; color: #3f3f46; }
+.form-label-en { font-size: 11px; color: #9b9ba2; }
+
+.error-msg {
+    font-size: 12px;
+    color: #c5453b;
+    margin-top: 6px;
+    min-height: 16px;
+}
+
+/* ─── Shake Animation ────────────────────────────────────────────────────── */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60%  { transform: translateX(-5px); }
+    40%, 80%  { transform: translateX(5px); }
+}
+.shake { animation: shake 0.4s ease; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SCR-01: Login Screen
+   ───────────────────────────────────────────────────────────────────────────── */
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 20px;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-card {
+    background: #fff;
+    border: 1px solid #eaeae8;
+    border-radius: 10px;
+    padding: 16px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.footer-note {
+    font-size: 12px;
+    color: #9b9ba2;
+    text-align: center;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Top Navigation Bar (shared across SCR-02/04/05)
+   ───────────────────────────────────────────────────────────────────────────── */
+.topnav {
+    height: 52px;
+    background: #fff;
+    border-bottom: 1px solid #ebebe9;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.nav-tabs {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-tab {
+    background: none;
+    border: none;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #71717a;
+    cursor: pointer;
+    padding: 5px 11px;
+    border-radius: 7px;
+    transition: all 0.13s;
+}
+.nav-tab:hover         { background: #f4f4f2; color: #3f3f46; }
+.nav-tab.active        { background: #dff6fb; color: #0e5e78; font-weight: 700; }
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.status-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #1f8a5b;
+    background: #f0faf6;
+    border: 1px solid #c3e6d8;
+    border-radius: 20px;
+    padding: 2px 8px;
+    white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Placeholder Views (Phase 2–5 stubs)
+   ───────────────────────────────────────────────────────────────────────────── */
+.placeholder-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 52px);
+    padding: 40px 20px;
+}
+
+.placeholder-card {
+    background: #fff;
+    border: 1.5px dashed #e0e0de;
+    border-radius: 12px;
+    padding: 36px 32px;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.placeholder-phase {
+    font-size: 15px;
+    font-weight: 700;
+    color: #3f3f46;
+    margin-bottom: 10px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Toast
+   ───────────────────────────────────────────────────────────────────────────── */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast {
+    background: #18181b;
+    color: #fff;
+    font-size: 13px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    animation: toast-in 0.2s ease;
+    white-space: nowrap;
+}
+
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Responsive
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+    .nav-tabs { gap: 0; }
+    .nav-tab  { padding: 5px 8px; font-size: 12px; }
+    .status-chip { display: none; }
+}

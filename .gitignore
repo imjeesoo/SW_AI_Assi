@@ -1,0 +1,22 @@
+# Environment (API key)
+.env
+
+# Runtime data (sensitive / personal)
+data/config.json
+data/memory.json
+data/logs/
+data/sessions/
+
+# Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# OS
+.DS_Store
+Thumbs.db
