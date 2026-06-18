@@ -206,30 +206,34 @@ function route() {
 // ─────────────────────────────────────────────────────────────────────────────
 function buildNav(activePath, opts = {}) {
     const tabs = [
-        { label: '채팅',  path: '/'         },
-        { label: '메모리', path: '/memory'   },
-        { label: '설정',  path: '/settings' },
+        { label: '채팅',  icon: '◎', path: '/'         },
+        { label: '메모리', icon: '★', path: '/memory'   },
+        { label: '설정',  icon: '⚙', path: '/settings' },
     ];
     const tabsHtml = tabs.map(t => {
         const cls = activePath === t.path ? 'nav-tab active' : 'nav-tab';
-        return `<button class="${cls}" onclick="navigate('${t.path}')">${t.label}</button>`;
+        return `<button class="${cls}" onclick="navigate('${t.path}')" title="${t.label}">
+            <span class="nav-icon" aria-hidden="true">${t.icon}</span>
+            <span class="nav-label">${t.label}</span>
+        </button>`;
     }).join('');
 
+    // Hamburger lives in nav-right so brand stays leftmost on all breakpoints
     const hamburger = opts.sidebar
         ? `<button class="hamburger" id="hamburger-btn" title="메뉴">☰</button>`
         : '';
 
     return `
     <nav class="topnav">
-        ${hamburger}
         <div class="nav-brand">
             <div class="brand-badge">아</div>
             <span class="brand-name">SIWOO AI</span>
         </div>
         <div class="nav-tabs">${tabsHtml}</div>
         <div class="nav-right">
+            ${hamburger}
             <span class="status-chip">● 로컬</span>
-            <button class="btn-ghost" onclick="logout()">로그아웃</button>
+            <button class="btn-ghost nav-logout" onclick="logout()">로그아웃</button>
         </div>
     </nav>`;
 }

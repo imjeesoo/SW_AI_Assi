@@ -54,24 +54,27 @@ async def chat(
     messages = session["messages"]
 
     async def event_generator():
-        full_text = ""
-        aborted = False
+        full_text      = ""
+        aborted        = False
+        accumulated_len = 0  # tracks chars received for STREAM_ABORT log
 
         try:
             async for chunk in stream_chat(body.session_id, messages):
                 # Check for client disconnect on each chunk
                 if await request.is_disconnected():
-                    log.warning(f"STREAM_ABORT | session={sid}")
+                    log.warning(f"STREAM_ABORT | session={sid} resp_len={accumulated_len}")
                     aborted = True
                     break
 
                 yield chunk
 
-                # Parse our own SSE line to extract full_text when done
+                # Parse our own SSE line to track accumulated text and full_text
                 if chunk.startswith("data: "):
                     try:
                         payload = json.loads(chunk[6:])
-                        if payload.get("done"):
+                        if payload.get("delta"):
+                            accumulated_len += len(payload["delta"])
+                        elif payload.get("done"):
                             full_text = payload.get("full_text", "")
                     except (json.JSONDecodeError, KeyError):
                         pass

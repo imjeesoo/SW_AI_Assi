@@ -73,7 +73,11 @@ async def save_session(session: dict) -> None:
         payload = json.dumps(session, indent=2, ensure_ascii=False)
         async with aiofiles.open(path, "w", encoding="utf-8") as f:
             await f.write(payload)
-        log.info(f"SESSION_SAVE | id={sid[:8]} msg_count={len(session.get('messages', []))}")
+        log.info(
+            f"SESSION_SAVE | id={sid[:8]} "
+            f"msg_count={len(session.get('messages', []))} "
+            f"bytes={len(payload.encode('utf-8'))}"
+        )
     except Exception as e:
         log.error(f"SESSION_SAVE_FAIL | id={sid[:8]} error={str(e)!r}")
         raise

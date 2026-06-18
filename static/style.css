@@ -319,13 +319,21 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ─── Nav tab icon/label visibility ─────────────────────────────────────────── */
+.nav-icon  { display: none; }   /* icon hidden on desktop (label visible) */
+.nav-label { display: inline; }
+
 /* ─────────────────────────────────────────────────────────────────────────────
    Responsive (global)
    ───────────────────────────────────────────────────────────────────────────── */
 @media (max-width: 767px) {
-    .nav-tabs { gap: 0; }
-    .nav-tab  { padding: 5px 8px; font-size: 12px; }
+    /* Nav: icon-only mode */
+    .nav-icon  { display: inline; font-size: 15px; line-height: 1; }
+    .nav-label { display: none; }
+    .nav-tabs  { gap: 0; }
+    .nav-tab   { padding: 5px 8px; }
     .status-chip { display: none; }
+    .nav-logout  { font-size: 11px; padding: 4px 6px; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -1065,3 +1073,17 @@ body {
 }
 .btn-settings-save:hover:not(:disabled) { background: #c8edf5; }
 .btn-settings-save:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Responsive: Memory + Settings pages (mobile)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+    .memory-page,
+    .settings-page {
+        padding: 16px 12px 32px;
+    }
+    .memory-header-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+    .memory-header-row .btn-danger { align-self: flex-end; }
+    .settings-section-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .prompt-editor { min-height: 160px; font-size: 11px; }
+}
