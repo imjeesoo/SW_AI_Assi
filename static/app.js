@@ -74,6 +74,11 @@ window.addEventListener('popstate', route);
 // ─────────────────────────────────────────────────────────────────────────────
 // HTTP helpers
 // ─────────────────────────────────────────────────────────────────────────────
+function _handleUnauth() {
+    clearToken(); navigate('/login');
+    showToast('세션이 만료되었습니다. 다시 로그인해주세요.');
+}
+
 async function apiPost(path, data, authenticated = true) {
     const headers = { 'Content-Type': 'application/json' };
     if (authenticated) {
@@ -87,11 +92,7 @@ async function apiPost(path, data, authenticated = true) {
             headers,
             body: JSON.stringify(data),
         });
-        if (res.status === 401) {
-            clearToken(); navigate('/login');
-            showToast('세션이 만료되었습니다. 다시 로그인해주세요.');
-            return null;
-        }
+        if (res.status === 401) { _handleUnauth(); return null; }
         return res;
     } catch (err) {
         console.error('API error:', err);
@@ -106,11 +107,43 @@ async function apiGet(path) {
         const res = await fetch(API_BASE + path, {
             headers: { 'Authorization': `Bearer ${t}` },
         });
-        if (res.status === 401) {
-            clearToken(); navigate('/login');
-            showToast('세션이 만료되었습니다. 다시 로그인해주세요.');
-            return null;
-        }
+        if (res.status === 401) { _handleUnauth(); return null; }
+        return res;
+    } catch (err) {
+        console.error('API error:', err);
+        return null;
+    }
+}
+
+async function apiPut(path, data) {
+    const t = getToken();
+    if (!t) { navigate('/login'); return null; }
+    try {
+        const res = await fetch(API_BASE + path, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${t}`,
+            },
+            body: JSON.stringify(data),
+        });
+        if (res.status === 401) { _handleUnauth(); return null; }
+        return res;
+    } catch (err) {
+        console.error('API error:', err);
+        return null;
+    }
+}
+
+async function apiDelete(path) {
+    const t = getToken();
+    if (!t) { navigate('/login'); return null; }
+    try {
+        const res = await fetch(API_BASE + path, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${t}` },
+        });
+        if (res.status === 401) { _handleUnauth(); return null; }
         return res;
     } catch (err) {
         console.error('API error:', err);
@@ -771,33 +804,246 @@ function _autoResize() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SCR-04: Memory Viewer (Phase 4 stub)
+// SCR-04: Memory Viewer
 // ─────────────────────────────────────────────────────────────────────────────
-function renderMemory($app) {
+async function renderMemory($app) {
     $app.innerHTML = buildNav('/memory') + `
-    <div class="placeholder-view">
-        <div class="placeholder-card">
-            <p class="placeholder-phase">메모리 뷰어</p>
-            <p class="muted" style="font-size:13px;line-height:1.6">
-                Phase 4(메모리 시스템)와 Phase 5(뷰어 UI) 완료 후 사용 가능합니다.
-            </p>
+    <div class="memory-page">
+        <div class="memory-body">
+            <div class="section-label mono">ACCUMULATED MEMORY</div>
+            <div class="memory-header-row">
+                <div>
+                    <div class="section-title">누적 메모리</div>
+                    <div id="memory-count-label" class="section-sub muted"></div>
+                </div>
+                <button class="btn-danger" id="btn-clear-all">전체 초기화</button>
+            </div>
+            <div id="memory-list">
+                <div class="muted" style="text-align:center;padding:32px;font-size:13px">불러오는 중…</div>
+            </div>
         </div>
     </div>`;
+
+    document.getElementById('btn-clear-all').addEventListener('click', _showClearMemoryDialog);
+    await _loadMemoryList();
+}
+
+async function _loadMemoryList() {
+    const res = await apiGet('/memory');
+    if (!res || !res.ok) {
+        const $list = document.getElementById('memory-list');
+        if ($list) $list.innerHTML =
+            `<div class="bubble-error" style="max-width:400px">메모리를 불러올 수 없습니다.</div>`;
+        return;
+    }
+    const data = await res.json();
+    _renderMemoryList(data);
+}
+
+function _renderMemoryList(data) {
+    const $list = document.getElementById('memory-list');
+    const $cnt  = document.getElementById('memory-count-label');
+    if (!$list) return;
+
+    const summaries = data.summaries || [];
+    const total     = data.total    || 0;
+
+    if ($cnt) $cnt.textContent = `총 ${total}개 세션`;
+
+    if (summaries.length === 0 && !data.compressed_summary) {
+        $list.innerHTML = `
+        <div class="empty-memory-card">
+            <div class="empty-memory-text">아직 저장된 메모리가 없어요</div>
+        </div>`;
+        return;
+    }
+
+    let html = '';
+
+    // Show compressed summary card if it exists
+    if (data.compressed_summary) {
+        const bullets = data.compressed_summary.split('\n').filter(l => l.trim());
+        const bulletHtml = bullets.map(b =>
+            `<div class="bullet-item"><span class="bullet-dot"></span><span>${_escHtml(b.replace(/^[•\-]\s*/, ''))}</span></div>`
+        ).join('');
+        html += `
+        <div class="memory-card memory-card-compressed">
+            <div class="memory-card-header">
+                <div class="memory-card-meta">
+                    <span class="memory-id-chip mono">압축</span>
+                    <span class="memory-date mono muted">이전 대화 통합 요약</span>
+                </div>
+            </div>
+            <div class="memory-card-body">${bulletHtml}</div>
+        </div>`;
+    }
+
+    // Individual summaries (already sorted date desc by server)
+    for (const s of summaries) {
+        const idNum     = s.id ? s.id.split('_')[1] || '??' : '??';
+        const bullets   = (s.content || '').split('\n').filter(l => l.trim());
+        const bulletHtml = bullets.map(b =>
+            `<div class="bullet-item"><span class="bullet-dot"></span><span>${_escHtml(b.replace(/^[•\-]\s*/, ''))}</span></div>`
+        ).join('');
+        html += `
+        <div class="memory-card" data-id="${_escHtml(s.id)}">
+            <div class="memory-card-header">
+                <div class="memory-card-meta">
+                    <span class="memory-id-chip mono">#${_escHtml(idNum)}</span>
+                    <span class="memory-date mono">${_escHtml(s.date || '')}</span>
+                </div>
+                <button class="btn-mem-delete" data-id="${_escHtml(s.id)}" title="삭제">×</button>
+            </div>
+            <div class="memory-card-body">${bulletHtml || '<span class="muted" style="font-size:12px">(내용 없음)</span>'}</div>
+        </div>`;
+    }
+
+    $list.innerHTML = html;
+
+    $list.querySelectorAll('.btn-mem-delete').forEach(btn => {
+        btn.addEventListener('click', () => _deleteMemory(btn.dataset.id));
+    });
+}
+
+async function _deleteMemory(memId) {
+    const res = await apiDelete(`/memory/${memId}`);
+    if (!res) return;
+    if (res.status === 204) {
+        showToast('메모리가 삭제되었습니다.');
+        await _loadMemoryList();
+    } else if (res.status === 404) {
+        showToast('이미 삭제된 항목입니다.');
+        await _loadMemoryList();
+    }
+}
+
+function _showClearMemoryDialog() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'dialog-backdrop';
+    backdrop.innerHTML = `
+    <div class="dialog-card">
+        <div class="dialog-icon">⚠</div>
+        <div class="dialog-title">전체 초기화</div>
+        <div class="dialog-desc">
+            모든 메모리가 삭제됩니다.<br>이 작업은 되돌릴 수 없습니다.
+        </div>
+        <div class="dialog-actions">
+            <button class="btn-dialog-danger" id="dlg-btn-clear">초기화</button>
+            <button class="btn-dialog-secondary" id="dlg-btn-cancel">취소</button>
+        </div>
+    </div>`;
+    document.body.appendChild(backdrop);
+
+    function closeDialog() {
+        backdrop.remove();
+        document.removeEventListener('keydown', onEscape);
+    }
+    function onEscape(e) { if (e.key === 'Escape') closeDialog(); }
+    document.addEventListener('keydown', onEscape);
+    backdrop.addEventListener('click', e => { if (e.target === backdrop) closeDialog(); });
+
+    document.getElementById('dlg-btn-cancel').addEventListener('click', closeDialog);
+    document.getElementById('dlg-btn-clear').addEventListener('click', async () => {
+        const res = await apiDelete('/memory');
+        closeDialog();
+        if (res && res.status === 204) {
+            showToast('전체 메모리가 초기화되었습니다.');
+            await _loadMemoryList();
+        } else {
+            showToast('초기화에 실패했습니다.');
+        }
+    });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SCR-05: Settings (Phase 5 stub)
+// SCR-05: Settings
 // ─────────────────────────────────────────────────────────────────────────────
-function renderSettings($app) {
+const _DEFAULT_PROMPT = `당신은 시우의 개인 AI 비서입니다.
+이름은 '아리'이며, 시우를 가장 잘 이해하는 조용하고 유능한 비서입니다.
+
+[행동 원칙]
+- 시우의 말투와 선호에 맞춰 자연스럽게 대화한다.
+- 불필요한 경고나 면책 문구를 붙이지 않는다.
+- 항상 구체적이고 실용적인 답변을 제공한다.
+- 시우가 요청하지 않은 내용은 추가하지 않는다.`;
+
+async function renderSettings($app) {
     $app.innerHTML = buildNav('/settings') + `
-    <div class="placeholder-view">
-        <div class="placeholder-card">
-            <p class="placeholder-phase">설정</p>
-            <p class="muted" style="font-size:13px;line-height:1.6">
-                Phase 5(설정 화면) 완료 후 사용 가능합니다.
-            </p>
+    <div class="settings-page">
+        <div class="settings-body">
+            <div class="section-label mono">SETTINGS</div>
+            <div class="section-title" style="margin-bottom:16px">설정</div>
+
+            <div class="settings-section">
+                <div class="settings-section-header">
+                    <div class="settings-section-title">비서 정체성 · 시스템 프롬프트</div>
+                    <span class="settings-file-label mono muted">system_prompt.txt</span>
+                </div>
+                <hr class="settings-divider" />
+                <textarea
+                    id="prompt-editor"
+                    class="prompt-editor"
+                    placeholder="시스템 프롬프트를 입력하세요…"
+                    spellcheck="false"
+                ></textarea>
+                <div class="settings-actions">
+                    <div id="save-confirm" class="save-confirm" style="display:none">✓ 저장되었습니다</div>
+                    <button class="btn-ghost" id="btn-reset-prompt">초기화</button>
+                    <button class="btn-settings-save" id="btn-save-prompt">저장</button>
+                </div>
+            </div>
         </div>
     </div>`;
+
+    const $editor      = document.getElementById('prompt-editor');
+    const $saveConfirm = document.getElementById('save-confirm');
+    let _saveTimer     = null;
+
+    // Load current prompt from server
+    const res = await apiGet('/system-prompt');
+    if (res && res.ok) {
+        const data = await res.json();
+        $editor.value = data.content;
+    } else {
+        showToast('시스템 프롬프트를 불러올 수 없습니다.');
+        $editor.value = _DEFAULT_PROMPT;
+    }
+
+    // Hide confirmation when user starts editing
+    $editor.addEventListener('input', () => {
+        $saveConfirm.style.display = 'none';
+        if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
+    });
+
+    // Save
+    document.getElementById('btn-save-prompt').addEventListener('click', async () => {
+        const content = $editor.value;
+        const $btn = document.getElementById('btn-save-prompt');
+        $btn.disabled = true;
+        $btn.textContent = '저장 중…';
+
+        const res = await apiPut('/system-prompt', { content });
+        $btn.disabled = false;
+        $btn.textContent = '저장';
+
+        if (res && res.ok) {
+            $saveConfirm.style.display = 'block';
+            if (_saveTimer) clearTimeout(_saveTimer);
+            _saveTimer = setTimeout(() => {
+                $saveConfirm.style.display = 'none';
+                _saveTimer = null;
+            }, 3000);
+        } else {
+            showToast('저장에 실패했습니다.');
+        }
+    });
+
+    // Reset to default (no auto-save — user must click 저장)
+    document.getElementById('btn-reset-prompt').addEventListener('click', () => {
+        $editor.value = _DEFAULT_PROMPT;
+        $saveConfirm.style.display = 'none';
+        if (_saveTimer) { clearTimeout(_saveTimer); _saveTimer = null; }
+    });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

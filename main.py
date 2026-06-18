@@ -36,6 +36,8 @@ from app.config import load_config
 from app.routers import auth as auth_router
 from app.routers import sessions as sessions_router
 from app.routers import chat as chat_router
+from app.routers import memory as memory_router
+from app.routers import config as config_router
 
 
 # ─── 7-day log cleanup ────────────────────────────────────────────────────────
@@ -132,6 +134,8 @@ app = FastAPI(title="SIWOO AI", lifespan=lifespan)
 app.include_router(auth_router.router, prefix="/api")
 app.include_router(sessions_router.router, prefix="/api")
 app.include_router(chat_router.router, prefix="/api")
+app.include_router(memory_router.router, prefix="/api")
+app.include_router(config_router.router, prefix="/api")
 
 # Static files (/static/style.css, /static/app.js …)
 app.mount("/static", StaticFiles(directory="static"), name="static")
